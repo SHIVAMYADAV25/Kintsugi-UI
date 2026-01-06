@@ -35,10 +35,14 @@ const page = () => {
   }
 
   useEffect(()=>{
-    if(projectDetail && screenConfig && screenConfig.length == 0){
-      // generateScreenConfig();
-      console.log("Generating Screen Config...")
-    }
+    if (!projectDetail) return;
+
+  if (screenConfig.length === 0) {
+    console.log("Generating Screen Config...");
+    // generateScreenConfig();
+  } else {
+    GenerateScreenUIUX();
+  }
   },[projectDetail&&screenConfig])
 
   const generateScreenConfig= async ()=>{
@@ -52,6 +56,31 @@ const page = () => {
 
     console.log(result.data);
     GetProjectDetail();
+    setLoading(false)
+  }
+
+  const GenerateScreenUIUX = async () =>{
+    setLoading(true)
+
+    for(let index=0;index<screenConfig?.length;index++){
+      const screen=screenConfig[index];
+      if(screen.code) continue;
+
+      setLoadingMessage("Generating Screen"+index+1);
+      const result = await axios.post("/api/generate-screen-ui",{
+        projectId,
+        screenId : screen.screenId,
+        screenName:screen.screenName,
+        purpose:screen.purpose,
+        screenDescription:screen.screenDescription
+      })
+
+      console.log("console.log"+result.data)
+      setScreenConfig(prev=>prev.map((item,i)=>(
+        i === index ? result.data : item
+      )))
+    }
+    // console.log("hello")
     setLoading(false)
   }
 
