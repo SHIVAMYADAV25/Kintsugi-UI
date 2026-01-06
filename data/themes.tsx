@@ -1,28 +1,28 @@
-export type Theme = {
-  background: string;
-  foreground: string;
-  card: string;
-  cardForeground: string;
-  popover: string;
-  popoverForeground: string;
-  primary: string;
-  primaryRgb: string;
-  primaryForeground: string;
-  secondary: string;
-  secondaryForeground: string;
-  muted: string;
-  mutedForeground: string;
-  accent: string;
-  accentForeground: string;
-  destructive: string;
-  border: string;
-  input: string;
-  ring: string;
-  radius: string;
-  chart: string[];
-};
+// export type Theme = {
+//   background: string;
+//   foreground: string;
+//   card: string;
+//   cardForeground: string;
+//   popover: string;
+//   popoverForeground: string;
+//   primary: string;
+//   primaryRgb: string;
+//   primaryForeground: string;
+//   secondary: string;
+//   secondaryForeground: string;
+//   muted: string;
+//   mutedForeground: string;
+//   accent: string;
+//   accentForeground: string;
+//   destructive: string;
+//   border: string;
+//   input: string;
+//   ring: string;
+//   radius: string;
+//   chart: string[];
+// };
 
-export const THEMES: Record<string, Theme> = {
+export const THEMES = {
   PAPER_GRAY: {
     background: "#f7f7f5",
     foreground: "#1a1a18",
@@ -142,8 +142,16 @@ export const THEMES: Record<string, Theme> = {
     radius: "0.65rem",
     chart: ["#9c3d22", "#c76d3a", "#e19f6f", "#6f422a", "#b8572b"],
   },
-};
+} as const;
+
+export const THEME_NAME_LIST = [
+  "PAPER_GRAY",
+  "CLASSIC_NAVY",
+  "WARM_IVORY",
+  "SOFT_MONO",
+  "TERRACOTTA"
+ ] as const;
 
 export type ThemeKey = keyof typeof THEMES;
 
-export const THEME_NAME_LIST = Object.keys(THEMES) as ThemeKey[];
+export type THEME_NAME_LIST = (typeof THEMES)[ThemeKey];
