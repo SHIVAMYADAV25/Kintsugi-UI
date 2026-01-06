@@ -21,7 +21,7 @@ const provider =  ({children} : any) => {
 
   return (
     <div>
-      // at any component we can set user
+       {/* at any component we can set user */}
       <userDetailContext.Provider value={{useDetaile,setUserDetail}}>
             {children}
       </userDetailContext.Provider>
