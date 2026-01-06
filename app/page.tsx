@@ -3,6 +3,14 @@ import { UserButton } from "@clerk/nextjs";
 import Header from "./_shared/Header";
 import Hero from "./_shared/Hero";
 
+/**
+ * Render the home page layout with header, hero, and decorative background elements.
+ *
+ * The root element contains the shared Header and Hero components plus four absolutely
+ * positioned, blurred circular divs used for background decoration.
+ *
+ * @returns A JSX element containing the header, hero, and four positioned blurred circular decorative divs.
+ */
 export default function Home() {
   return (
     <div>

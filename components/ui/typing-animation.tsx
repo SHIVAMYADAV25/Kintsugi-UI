@@ -22,6 +22,29 @@ interface TypingAnimationProps extends MotionProps {
   cursorStyle?: "line" | "block" | "underscore"
 }
 
+/**
+ * Renders a typewriter-style text animation with optional multi-word cycling, cursor, and in-view start behavior.
+ *
+ * The component types and optionally deletes characters from either the provided `words` array or the `children` string,
+ * supports configurable speeds and delays, can loop through multiple words, and displays a cursor in selectable styles.
+ *
+ * @param children - A single string to animate when `words` is not provided
+ * @param words - Array of words to cycle through; if omitted and `children` is provided the component animates that single string
+ * @param className - Additional CSS class names applied to the root element
+ * @param duration - Base timing value (ms) used when `typeSpeed` is not provided
+ * @param typeSpeed - Milliseconds per character while typing; defaults to `duration` when omitted
+ * @param deleteSpeed - Milliseconds per character while deleting; defaults to half of `typeSpeed`
+ * @param delay - Initial delay (ms) before starting the first animation cycle
+ * @param pauseDelay - Delay (ms) to wait after finishing a word before deleting when cycling
+ * @param loop - If true, continuously cycles through `words`; otherwise stops after the last word
+ * @param as - Element type to render as (e.g., "span", "div"); defaults to "span"
+ * @param startOnView - If true, animation only starts when the element is scrolled into view
+ * @param showCursor - If true, displays a cursor alongside the animated text
+ * @param blinkCursor - If true, applies a blinking animation to the cursor
+ * @param cursorStyle - Visual style of the cursor: `"line"` (default), `"block"`, or `"underscore"`
+ * @param props - Additional props forwarded to the rendered element
+ * @returns The rendered element containing the animated text and optional cursor
+ */
 export function TypingAnimation({
   children,
   words,
