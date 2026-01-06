@@ -48,6 +48,7 @@ const Hero = () => {
 
         console.log(project.data);
         setLoading(false);
+        router.push("/project/" + projectId);
     }
 
   return (
