@@ -8,7 +8,7 @@ const ProjectHeader = () => {
      <div className='flex justify-between items-center p-3 shadow'>
         <div className='flex gap-2 items-center'>
             <Image src={"/ux_logo.webp"} alt="logo" width={40} height={40} />
-            <h2 className='text-sm font-semibold'>Kintsugi <span className='text-primary'>UI</span></h2>
+            <h2 className='text-xl font-semibold'>Kintsugi <span className='text-primary'>UI</span></h2>
         </div>
         <Button> <SaveIcon/> Save</Button>
     </div>
