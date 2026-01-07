@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
 import ScreenFrame from './ScreenFrame';
 import { ProjectType, ScreenConfig } from '@/type/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Cross, Ghost, MinusIcon, PlusIcon, RefreshCcwIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 type Props = {
     projectDetail : ProjectType | undefined,
@@ -16,9 +18,22 @@ const Canvas = ({projectDetail,screenConfig,loading}:Props) => {
     const [panningEnable,setPanningEnable] = useState(true);
     const isMobile = projectDetail?.device === "mobile";
 
-    const SCREEN_WIDTH = isMobile?400:900;
+    const SCREEN_WIDTH = isMobile?400:1200;
     const SCREEN_HEIGTH = isMobile?800:800;
-    const gap=isMobile ? 10 : 10;
+    const gap=isMobile ? 10 : 20;
+
+    const Controls = () => {
+        const { zoomIn, zoomOut, resetTransform } = useControls();
+
+        return (
+            <div className="tools absolute p-2 px-3 bg-white shadow flex gap-2 rounded-4xl bottom-5 left-1/2 z-30 text-gray-500 ">
+            <Button variant={"ghost"} onClick={() => zoomIn()}><PlusIcon/></Button>
+            <Button variant={"ghost"} onClick={() => zoomOut()}><MinusIcon/></Button>
+            <Button variant={"ghost"} onClick={() => resetTransform()}><RefreshCcwIcon/></Button>
+            </div>
+        );
+        };
+
   return (
     <div className='w-full h-screen bg-gray-200/20' 
     style={{
@@ -26,16 +41,25 @@ const Canvas = ({projectDetail,screenConfig,loading}:Props) => {
         backgroundSize:"20px 20px"
     }}>
         <TransformWrapper
-            initialScale={0.5}
-            minScale={0.5}
-            maxScale={3}
+            initialScale={0.2}
+            minScale={0.1}
+            maxScale={2}
             initialPositionX={50}
             initialPositionY={50}
             limitToBounds={false}
             wheel={{step:0.8}}
             doubleClick={{disabled:false}}
-            panning={{disabled:!panningEnable}}
+
+            panning={{
+                disabled: !panningEnable,
+                velocityDisabled: false,   // <— smooth panning
+                lockAxisX: false,
+                lockAxisY: false
+            }}
         >
+            {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
+        <>
+          <Controls />
             <TransformComponent
                 wrapperStyle={{width:"100%",height:"100%"}}
             >
@@ -73,6 +97,7 @@ const Canvas = ({projectDetail,screenConfig,loading}:Props) => {
                 
                 {/* <ScreenFrame x={300} y={0} setPanningEnable={setPanningEnable}/> */}
             </TransformComponent>
+            </>)}
         </TransformWrapper>
     </div>
   )

@@ -29,6 +29,7 @@ export async function POST(req:NextRequest) {
                 ]
             }
         ],
+        responseFormat: { type: "json_object" },
         stream: false,
     })
 
