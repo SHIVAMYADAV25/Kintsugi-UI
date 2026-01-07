@@ -3,19 +3,21 @@ import axios from "axios"
 import ProjectHeader from "./_shared/ProjectHeader"
 import SettingSection from "./_shared/SettingSection"
 import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { ProjectType, ScreenConfig } from "@/type/types"
 import { Loader2Icon } from "lucide-react"
 import Canvas from "./_shared/Canvas"
+import { SettingContext } from "@/context/SettingContext"
 
 const page = () => {
 
   const {projectId} = useParams();
   const [projectDetail,setProjectDetail] = useState<ProjectType>()
   const [screenConfigOriginal,setScreenConfigOriginal] =useState<ScreenConfig[]>([]);
-   const [screenConfig,setScreenConfig] =useState<ScreenConfig[]>([]);
+  const [screenConfig,setScreenConfig] =useState<ScreenConfig[]>([]);
   const [loading,setLoading] = useState(true);
   const [loadingMessage,setLoadingMessage] = useState("Loading...")
+  const {settingDetail,setSettingDetail} = useContext(SettingContext)
 
   useEffect(()=>{
     projectId && GetProjectDetail();
@@ -29,7 +31,7 @@ const page = () => {
     setProjectDetail(result.data.projectDetail);
     setScreenConfigOriginal(result.data.screenConfig);
     setScreenConfig(result.data.screenConfig);
-
+    setSettingDetail(result.data.projectDetail);
     if(result?.data?.screenConfig?.length == 0){
       console.log("hello")
     }
@@ -42,9 +44,9 @@ const page = () => {
 
   if (screenConfigOriginal.length === 0 && screenConfigOriginal && projectDetail) {
     console.log("Generating Screen Config...");
-    // generateScreenConfig();
+    generateScreenConfig();
   } else {
-    // GenerateScreenUIUX();
+    GenerateScreenUIUX();
   }
   },[screenConfigOriginal])
 

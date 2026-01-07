@@ -38,3 +38,34 @@ export async function GET(req:NextRequest) {
         return NextResponse.json({"error" : error})
     }
 }
+
+export async function PUT(req: NextRequest) {
+  const { projectName, theme, projectId } = await req.json();
+
+  if (!projectId) {
+    return NextResponse.json(
+      { error: "projectId is required" },
+      { status: 400 }
+    );
+  }
+
+  const updateFields: any = {};
+
+  if (projectName !== undefined) updateFields.projectName = projectName;
+  if (theme !== undefined) updateFields.theme = theme;
+
+  if (Object.keys(updateFields).length === 0) {
+    return NextResponse.json(
+      { error: "No values provided to update" },
+      { status: 400 }
+    );
+  }
+
+  const result = await db
+    .update(ProjectTable)
+    .set(updateFields)
+    .where(eq(ProjectTable.projectId, projectId))
+    .returning();
+
+  return NextResponse.json(result[0]);
+}
