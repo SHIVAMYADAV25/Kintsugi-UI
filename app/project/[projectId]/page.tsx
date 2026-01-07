@@ -6,12 +6,14 @@ import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { ProjectType, ScreenConfig } from "@/type/types"
 import { Loader2Icon } from "lucide-react"
+import Canvas from "./_shared/Canvas"
 
 const page = () => {
 
   const {projectId} = useParams();
   const [projectDetail,setProjectDetail] = useState<ProjectType>()
-  const [screenConfig,setScreenConfig] =useState<ScreenConfig[]>([]);
+  const [screenConfigOriginal,setScreenConfigOriginal] =useState<ScreenConfig[]>([]);
+   const [screenConfig,setScreenConfig] =useState<ScreenConfig[]>([]);
   const [loading,setLoading] = useState(true);
   const [loadingMessage,setLoadingMessage] = useState("Loading...")
 
@@ -25,6 +27,7 @@ const page = () => {
     const result = await axios.get("/api/project?projectId="+projectId)
     console.log(result.data)
     setProjectDetail(result.data.projectDetail);
+    setScreenConfigOriginal(result.data.screenConfig);
     setScreenConfig(result.data.screenConfig);
 
     if(result?.data?.screenConfig?.length == 0){
@@ -37,13 +40,13 @@ const page = () => {
   useEffect(()=>{
     if (!projectDetail) return;
 
-  if (screenConfig.length === 0) {
+  if (screenConfigOriginal.length === 0 && screenConfigOriginal && projectDetail) {
     console.log("Generating Screen Config...");
     // generateScreenConfig();
   } else {
-    GenerateScreenUIUX();
+    // GenerateScreenUIUX();
   }
-  },[projectDetail&&screenConfig])
+  },[screenConfigOriginal])
 
   const generateScreenConfig= async ()=>{
     setLoading(true);
@@ -87,7 +90,7 @@ const page = () => {
   return (
     <div>
         <ProjectHeader/>
-        <div>
+        <div className="flex">
             {loading && <div className="p-3 absolute
             left-1/2 top-20  bg-blue-300/20 border-blue-400 border rounded-xl">
               <h2 className="flex gap-2 items-center"> <Loader2Icon className="animate-spin"/>{loadingMessage}</h2>
@@ -96,6 +99,7 @@ const page = () => {
             <SettingSection projectDetail={projectDetail}/>
 
             {/* canvas */}
+            <Canvas projectDetail={projectDetail}  screenConfig={screenConfig}/>
         </div>
     </div>
   )
