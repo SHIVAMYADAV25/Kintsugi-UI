@@ -155,3 +155,60 @@ export const THEME_NAME_LIST = [
 export type ThemeKey = keyof typeof THEMES;
 
 export type THEME_NAME_LIST = (typeof THEMES)[ThemeKey];
+
+// const DEFAULT_CHART_COLORS = [
+//   "#4f46e5",
+//   "#22c55e",
+//   "#eab308",
+//   "#f43f5e",
+//   "#3b82f6",
+// ];
+
+
+export function themeToCssVars(theme: any) {
+    // const chart = theme.chart && Array.isArray(theme.chart)
+    // ? theme.chart
+    // : DEFAULT_CHART_COLORS;
+
+  return `
+:root {
+  --background: ${theme.background};
+  --foreground: ${theme.foreground};
+
+  --card: ${theme.card};
+  --card-foreground: ${theme.cardForeground};
+
+  --popover: ${theme.popover};
+  --popover-foreground: ${theme.popoverForeground};
+
+  --primary: ${theme.primary};
+  --primary-rgb: ${theme.primaryRgb};
+  --primary-foreground: ${theme.primaryForeground};
+
+  --secondary: ${theme.secondary};
+  --secondary-foreground: ${theme.secondaryForeground};
+
+  --muted: ${theme.muted};
+  --muted-foreground: ${theme.mutedForeground};
+
+  --accent: ${theme.accent};
+  --accent-foreground: ${theme.accentForeground};
+
+  --destructive: ${theme.destructive};
+
+  --border: ${theme.border};
+  --input: ${theme.input};
+  --ring: ${theme.ring};
+
+  --radius: ${theme.radius};
+
+  /* charts */
+--chart-1: ${theme.chart?.[0] ?? "#4f46e5"};
+--chart-2: ${theme.chart?.[1] ?? "#22c55e"};
+--chart-3: ${theme.chart?.[2] ?? "#eab308"};
+--chart-4: ${theme.chart?.[3] ?? "#f43f5e"};
+--chart-5: ${theme.chart?.[4] ?? "#3b82f6"};
+}
+`;
+}
+
