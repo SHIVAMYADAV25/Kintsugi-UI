@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 type props={
     projectDetail:ProjectType | undefined,
     screenDescription ?: string[] | undefined,
-    takeScreenShot : any
+    takeScreenShot: () => void
 }
 
 const SettingSection = ({projectDetail,screenDescription,takeScreenShot}:props) => {

@@ -37,33 +37,38 @@ const Canvas = ({projectDetail,screenConfig,loading,takeScreenShot}:Props) => {
         );
         };
 
-        const captureOneIframe = async (iframe: HTMLIFrameElement) => {
+ const captureOneIframe = async (iframe: HTMLIFrameElement) => {
+  if (!iframe?.contentDocument || !iframe.contentWindow) {
+    throw new Error("iframe not ready");
+  }
+
   const doc = iframe.contentDocument;
-  if (!doc) throw new Error("iframe doc not ready");
 
-  // wait fonts if possible
-  if (doc.fonts?.ready) await doc.fonts.ready;
+  if (doc.readyState !== "complete") {
+    await new Promise((r) => setTimeout(r, 300));
+  }
 
-  // let iconify / tailwind apply
-  await new Promise((r) => setTimeout(r, 250));
+  if (doc.fonts?.ready) {
+    await doc.fonts.ready;
+  }
 
-  const target = doc.body; // or doc.documentElement
-  const w = doc.documentElement.scrollWidth;
-  const h = doc.documentElement.scrollHeight;
+  const target = doc.documentElement;
 
-  const canvas = await html2canvas(target, {
-    backgroundColor: null,
+  return await html2canvas(target, {
     useCORS: true,
     allowTaint: true,
-    width: w,
-    height: h,
-    windowWidth: w,
-    windowHeight: h,
     scale: window.devicePixelRatio || 1,
-  });
 
-  return canvas;
+    onclone: (clonedDoc) => {
+      clonedDoc.documentElement.style.background =
+        getComputedStyle(doc.documentElement).background;
+
+      clonedDoc.body.style.background =
+        getComputedStyle(doc.body).background;
+    },
+  });
 };
+
 
 const onTakeScreenshot = async (saveOnly = false) => {
   try {
@@ -119,9 +124,17 @@ const onTakeScreenshot = async (saveOnly = false) => {
   }
 };
 
-useEffect(()=>{
-            takeScreenShot && onTakeScreenshot(takeScreenShot);
-        },[takeScreenShot])
+      useEffect(() => {
+  if (!takeScreenShot) return;
+
+  const timeout = setTimeout(() => {
+    onTakeScreenshot();
+  }, 500); // ⏳ critical delay
+
+  return () => clearTimeout(timeout);
+}, [takeScreenShot]);
+
+
 
     const updateProjectWithScreenShot = async (base64Url:string) =>{
         const result = await axios.put("/api/project",{

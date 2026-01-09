@@ -5,7 +5,8 @@ export type ProjectType = {
     userInput:string,
     createdOn:string,
     projectName?:string,
-    theme?:string
+    theme?:string,
+    screenShot:string
 }
 
 export type ScreenConfig = {
