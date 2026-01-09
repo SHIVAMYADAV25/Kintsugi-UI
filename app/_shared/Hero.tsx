@@ -20,6 +20,7 @@ import { useState } from "react"
 import { useUser } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import axios from "axios"
+import { toast } from "sonner"
 
 
 
@@ -46,6 +47,11 @@ const Hero = () => {
         // Create new Project
         const project = await axios.post("/api/project",{userInput : userInput,device :device,projectId : projectId})
 
+        if(project.data.msg === "Limit Exceed"){
+          toast.error("Already reached 3 project Limit!") 
+          return
+          setLoading(false);
+        }
         console.log(project.data);
         setLoading(false);
         router.push("/project/" + projectId);

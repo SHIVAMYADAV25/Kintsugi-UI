@@ -1,12 +1,22 @@
 import { db } from "@/config/db";
 import { ProjectTable, ScreenConfigTable } from "@/config/schema";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { and, desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const { userInput, device, projectId } = await req.json();
   const user = await currentUser();
+
+  const {has} = await auth();
+  const hasPremiumAccess = has({plan:"unlimited"});
+
+  const projects  = await db.select().from(ProjectTable)
+  .where(eq(ProjectTable.userId,user?.primaryEmailAddress?.emailAddress as string))
+
+  if(projectId >= 2 && !hasPremiumAccess){
+    return NextResponse.json({"msg" : "Limit Exceed"})
+  }
 
   const result = await db
     .insert(ProjectTable)

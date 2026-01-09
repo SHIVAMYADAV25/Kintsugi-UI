@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { SignInButton, UserButton, useUser } from '@clerk/nextjs'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const Header = () => {
     const {user} = useUser();
@@ -13,8 +14,8 @@ const Header = () => {
             <h2 className='text-xl font-semibold'>Kintsugi <span className='text-primary'>UI</span></h2>
         </div>
         <ul className='flex gap-5 items-center'>
-            <li className='hover:text-primary cursor-pointer text-lg '>Home</li>
-            <li className='hover:text-primary cursor-pointer text-lg'>Pricing</li>
+            <Link href={"/"}> <li className='hover:text-primary cursor-pointer text-lg '>Home</li> </Link>
+            <Link href={"/pricing"}> <li className='hover:text-primary cursor-pointer text-lg'>Pricing</li> </Link>
         </ul>
         {!user ? 
         <SignInButton mode='modal'>

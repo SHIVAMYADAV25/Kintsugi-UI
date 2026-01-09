@@ -6,6 +6,7 @@ import { RefreshDataContext } from '@/context/RefreshDataContext';
 import { SettingContext } from '@/context/SettingContext';
 import { THEMES, THEME_NAME_LIST } from "@/data/themes";
 import { ProjectType } from '@/type/types';
+import { useAuth } from '@clerk/nextjs';
 import axios from 'axios';
 import { CameraIcon, Loader2Icon, ShareIcon, SparkleIcon } from 'lucide-react'
 import { useContext, useEffect, useState } from 'react';
@@ -25,6 +26,9 @@ const SettingSection = ({projectDetail,screenDescription,takeScreenShot}:props) 
     const [loading,setLoading] = useState(false)
     const [loadingMessage,setLoadingMessage] = useState("Loading...");
     const {refresData,setRefreshData} = useContext(RefreshDataContext)
+    const {has} = useAuth();
+    const hasPremiumAccess = has && has({plan:"unlimited"})
+
 
     useEffect(()=>{
         projectDetail&&setProjectName(projectDetail.projectName)
@@ -41,6 +45,12 @@ const SettingSection = ({projectDetail,screenDescription,takeScreenShot}:props) 
     }
 
     const GenerateNewScreen = async () =>{
+
+        if(!hasPremiumAccess){
+            toast.error("Limited Feature to Paid user Only");
+            return
+        }
+
         setLoading(true);
         // setLoadingMessage("Screen is getting Load")
         toast.success("Screen is Getting Generated Please Wait !!");
