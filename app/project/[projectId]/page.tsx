@@ -107,7 +107,13 @@ const page = () => {
               <h2 className="flex gap-2 items-center"> <Loader2Icon className="animate-spin"/>{loadingMessage}</h2>
             </div>}
             {/* setting */}
-            <SettingSection projectDetail={projectDetail}/>
+            <SettingSection
+              projectDetail={projectDetail}
+              screenDescription={screenConfig.map(
+                (item) => item.screenDescription
+              )}
+            />
+
 
             {/* canvas */}
             <Canvas projectDetail={projectDetail}  screenConfig={screenConfig}/>
