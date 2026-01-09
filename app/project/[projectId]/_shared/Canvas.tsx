@@ -75,6 +75,7 @@ const Canvas = ({projectDetail,screenConfig,loading}:Props) => {
                                     setPanningEnable={setPanningEnable}
                                     htmlCode={Item.code}
                                     projectDetail={projectDetail}
+                                    screenConfig={Item}
                                 />
                              : 
                                 <div

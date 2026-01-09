@@ -8,6 +8,7 @@ import { ProjectType, ScreenConfig } from "@/type/types"
 import { Loader2Icon } from "lucide-react"
 import Canvas from "./_shared/Canvas"
 import { SettingContext } from "@/context/SettingContext"
+import { RefreshDataContext } from "@/context/RefreshDataContext"
 
 const page = () => {
 
@@ -18,10 +19,18 @@ const page = () => {
   const [loading,setLoading] = useState(true);
   const [loadingMessage,setLoadingMessage] = useState("Loading...")
   const {settingDetail,setSettingDetail} = useContext(SettingContext)
+  const {refresData,setRefreshData} = useContext(RefreshDataContext)
 
   useEffect(()=>{
     projectId && GetProjectDetail();
   },[projectId]);
+
+  useEffect(()=>{
+    if(refresData?.method == "screenConfig"){
+      GetProjectDetail();
+      console.log("hello");
+    }
+  },[refresData])
 
   const GetProjectDetail = async () =>{
     setLoadingMessage("Loading...")
