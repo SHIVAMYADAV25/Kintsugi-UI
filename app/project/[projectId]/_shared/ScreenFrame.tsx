@@ -14,10 +14,11 @@ type props = {
     height:number,
     htmlCode : string | undefined,
     projectDetail :ProjectType | undefined;
-    screenConfig : ScreenConfig | undefined
+    screenConfig : ScreenConfig | undefined,
+    iframeRef : any
 }
 
-const ScreenFrame = ({x,y,setPanningEnable,width,height,htmlCode,projectDetail,screenConfig}:props) => {
+const ScreenFrame = ({x,y,setPanningEnable,width,height,htmlCode,projectDetail,screenConfig,iframeRef}:props) => {
 
 
 const clean = (htmlCode ?? "")
@@ -41,7 +42,7 @@ const clean = (htmlCode ?? "")
     THEMES[themeKey as keyof typeof THEMES] ?? THEMES.SOFT_MONO;
     // console.log(themeToCssVars(theme))
 
-    const iframeRef =  useRef<HTMLIFrameElement | null>(null);
+    // const iframeRef =  useRef<HTMLIFrameElement | null>(null);
 
     // useEffect(()=>{console.log(html)},[])
 

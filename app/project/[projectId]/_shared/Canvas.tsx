@@ -1,23 +1,26 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { TransformWrapper, TransformComponent, useControls } from "react-zoom-pan-pinch";
 import ScreenFrame from './ScreenFrame';
 import { ProjectType, ScreenConfig } from '@/type/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Cross, Ghost, MinusIcon, PlusIcon, RefreshCcwIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import html2canvas from 'html2canvas';
+import axios from 'axios';
 
 type Props = {
     projectDetail : ProjectType | undefined,
     screenConfig : ScreenConfig[],
-    loading?:boolean
-
+    loading?:boolean,
+    takeScreenShot:any
 }
 
-const Canvas = ({projectDetail,screenConfig,loading}:Props) => {
+const Canvas = ({projectDetail,screenConfig,loading,takeScreenShot}:Props) => {
 
     const [panningEnable,setPanningEnable] = useState(true);
     const isMobile = projectDetail?.device === "mobile";
-
+    const iframeRefs =  useRef<(HTMLIFrameElement | null)[]>([]);
     const SCREEN_WIDTH = isMobile?400:1200;
     const SCREEN_HEIGTH = isMobile?800:800;
     const gap=isMobile ? 10 : 20;
@@ -33,6 +36,102 @@ const Canvas = ({projectDetail,screenConfig,loading}:Props) => {
             </div>
         );
         };
+
+        const captureOneIframe = async (iframe: HTMLIFrameElement) => {
+  const doc = iframe.contentDocument;
+  if (!doc) throw new Error("iframe doc not ready");
+
+  // wait fonts if possible
+  if (doc.fonts?.ready) await doc.fonts.ready;
+
+  // let iconify / tailwind apply
+  await new Promise((r) => setTimeout(r, 250));
+
+  const target = doc.body; // or doc.documentElement
+  const w = doc.documentElement.scrollWidth;
+  const h = doc.documentElement.scrollHeight;
+
+  const canvas = await html2canvas(target, {
+    backgroundColor: null,
+    useCORS: true,
+    allowTaint: true,
+    width: w,
+    height: h,
+    windowWidth: w,
+    windowHeight: h,
+    scale: window.devicePixelRatio || 1,
+  });
+
+  return canvas;
+};
+
+const onTakeScreenshot = async (saveOnly = false) => {
+  try {
+    const iframes = iframeRefs.current.filter(Boolean) as HTMLIFrameElement[];
+    if (!iframes.length) {
+      toast.error("No iframes found to capture");
+      return;
+    }
+
+    // capture each iframe to its own canvas
+    const shotCanvases: HTMLCanvasElement[] = [];
+    for (let i = 0; i < iframes.length; i++) {
+      const c = await captureOneIframe(iframes[i]);
+      shotCanvases.push(c);
+    }
+
+    // stitch into final canvas (side-by-side)
+    const scale = window.devicePixelRatio || 1;
+    const headerH = 40; // same as your header
+    const outW =
+      Math.max(iframes.length * (SCREEN_WIDTH + gap), SCREEN_WIDTH) * scale;
+    const outH = (SCREEN_HEIGTH + headerH) * scale;
+
+    const out = document.createElement("canvas");
+    out.width = outW;
+    out.height = outH;
+
+    const ctx = out.getContext("2d");
+    if (!ctx) throw new Error("No 2d context");
+
+    // optional transparent background
+    ctx.clearRect(0, 0, outW, outH);
+
+    // draw each screen
+    for (let i = 0; i < shotCanvases.length; i++) {
+      const x = i * (SCREEN_WIDTH + gap) * scale;
+      const y = headerH * scale; // because iframe capture is body only
+      ctx.drawImage(shotCanvases[i], x, y);
+    }
+
+    // download
+    const url = out.toDataURL("image/png");
+    updateProjectWithScreenShot(url);
+    if(!saveOnly){
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "canvas.png";
+    a.click();
+    }
+  } catch (e) {
+    console.error(e);
+    toast.error("Capture failed (iframe)");
+  }
+};
+
+useEffect(()=>{
+            takeScreenShot && onTakeScreenshot(takeScreenShot);
+        },[takeScreenShot])
+
+    const updateProjectWithScreenShot = async (base64Url:string) =>{
+        const result = await axios.put("/api/project",{
+            screenShot : base64Url,
+            projectName:projectDetail?.projectName,
+            projectId: projectDetail?.projectId,
+            theme : projectDetail?.theme
+        })
+        console.log(result.data)
+    }
 
   return (
     <div className='w-full h-screen bg-gray-200/20' 
@@ -76,6 +175,7 @@ const Canvas = ({projectDetail,screenConfig,loading}:Props) => {
                                     htmlCode={Item.code}
                                     projectDetail={projectDetail}
                                     screenConfig={Item}
+                                    iframeRef={(ifrm:any) => (iframeRefs.current[index] = ifrm)}
                                 />
                              : 
                                 <div

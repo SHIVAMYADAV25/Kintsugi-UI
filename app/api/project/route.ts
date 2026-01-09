@@ -40,7 +40,7 @@ export async function GET(req:NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
-  const { projectName, theme, projectId } = await req.json();
+  const { projectName, theme, projectId,screenShot } = await req.json();
 
   if (!projectId) {
     return NextResponse.json(
@@ -53,6 +53,7 @@ export async function PUT(req: NextRequest) {
 
   if (projectName !== undefined) updateFields.projectName = projectName;
   if (theme !== undefined) updateFields.theme = theme;
+  if (screenShot !== undefined) updateFields.screenShot = screenShot as string ?? null
 
   if (Object.keys(updateFields).length === 0) {
     return NextResponse.json(
