@@ -1,14 +1,14 @@
 import { db } from "@/config/db";
 import { openrouter } from "@/config/openRouter";
 import { ProjectTable, ScreenConfigTable } from "@/config/schema";
-import { APP_LAYOUT_CONFIG_PROMPT } from "@/data/Prompt";
+import { APP_LAYOUT_CONFIG_PROMPT, GENERATE_NEW_SCREEN_IN_EXISTING_PROJECT_PROJECT } from "@/data/Prompt";
 import { currentUser } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 
 export async function POST(req:NextRequest) {
-    const {userInput,deviceType,projectId} = await req.json();
+    const {userInput,deviceType,projectId,oldScreenDescription,theme} = await req.json();
     const result = await openrouter.chat.send({
         model: "xiaomi/mimo-v2-flash:free",
         messages: [
@@ -17,7 +17,9 @@ export async function POST(req:NextRequest) {
             content: [
                 {
                 type: "text",
-                text: APP_LAYOUT_CONFIG_PROMPT.replace("{deviceType}",deviceType)
+                text: oldScreenDescription ? 
+                GENERATE_NEW_SCREEN_IN_EXISTING_PROJECT_PROJECT.replaceAll("{deviceType}",deviceType).replaceAll("{theme}",theme)
+                : APP_LAYOUT_CONFIG_PROMPT.replace("{deviceType}",deviceType)
                 }
             ]
             },{
@@ -25,7 +27,7 @@ export async function POST(req:NextRequest) {
                 "content" : [
                     {
                         type:"text",
-                        text:userInput
+                        text: oldScreenDescription ? userInput + " Old screen Description is: "+oldScreenDescription :  userInput 
                     }
                 ]
             }
@@ -38,7 +40,7 @@ export async function POST(req:NextRequest) {
 
     if(JSONAiResult){
     //update project table with project name
-    await db.update(ProjectTable).set({
+    !oldScreenDescription && await db.update(ProjectTable).set({
         projectVisualDescription:JSONAiResult.globalProjectVisualDescription,
         projectName:JSONAiResult.projectName,
         theme:JSONAiResult.theme
