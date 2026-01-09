@@ -13,10 +13,11 @@ import { toast } from 'sonner';
 
 type props={
     projectDetail:ProjectType | undefined,
-    screenDescription ?: string[] | undefined
+    screenDescription ?: string[] | undefined,
+    takeScreenShot: () => void
 }
 
-const SettingSection = ({projectDetail,screenDescription}:props) => {
+const SettingSection = ({projectDetail,screenDescription,takeScreenShot}:props) => {
     const [selectedTheme,setSelectedTheme] = useState("PAPER_GRAY");
     const [projectName,setProjectName] = useState(projectDetail?.projectName);
     const [userNewScreenInput,setUserNewScreenInput] = useState("");
@@ -115,7 +116,7 @@ const SettingSection = ({projectDetail,screenDescription}:props) => {
         <div className='mt-3'>
             <h2 className='text-sm mb-1'>Extras</h2>
             <div className='flex gap-3 '>
-            <Button size={"sm"} variant={"outline"}className="mt-2 "><CameraIcon/>ScreenShot</Button>
+            <Button size={"sm"} variant={"outline"}className="mt-2 " onClick={()=>takeScreenShot()}><CameraIcon/>ScreenShot</Button>
             <Button size={"sm"} variant={"outline"}className="mt-2 "><ShareIcon/>Share</Button>
             </div>
         </div>

@@ -20,7 +20,7 @@ const page = () => {
   const [loadingMessage,setLoadingMessage] = useState("Loading...")
   const {settingDetail,setSettingDetail} = useContext(SettingContext)
   const {refresData,setRefreshData} = useContext(RefreshDataContext)
-
+  const [takeScreenShot,setTakeScreenShot] = useState<number | null>(null);
   useEffect(()=>{
     projectId && GetProjectDetail();
   },[projectId]);
@@ -96,6 +96,7 @@ const page = () => {
     }
     // console.log("hello")
     setLoading(false)
+    setTakeScreenShot(Date.now())
   }
 
   return (
@@ -109,14 +110,16 @@ const page = () => {
             {/* setting */}
             <SettingSection
               projectDetail={projectDetail}
-              screenDescription={screenConfig.map(
-                (item) => item.screenDescription
-              )}
+              screenDescription={screenConfig.map(item => item.screenDescription)}
+              takeScreenShot={() => setTakeScreenShot(Date.now())}
             />
 
+            <Canvas
+              projectDetail={projectDetail}
+              screenConfig={screenConfig}
+              takeScreenShot={takeScreenShot}
+            />
 
-            {/* canvas */}
-            <Canvas projectDetail={projectDetail}  screenConfig={screenConfig}/>
         </div>
     </div>
   )
