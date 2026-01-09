@@ -212,7 +212,7 @@ Use the provided theme variables for the majority of the UI:
   var(--muted-foreground)
 
 Balance rules:
-- 60–65% of colors MUST come from theme variables
+- 80–90% of colors MUST come from theme variables
 - The remaining colors MAY be neutrals or subtle supporting shades
 - Supporting colors must visually harmonize with the theme
 
@@ -305,3 +305,75 @@ FINAL SELF-CHECK BEFORE OUTPUT
 - OUTPUT MUST BE ONLY inner HTML content, not a full document.
 - No <html>, no <head>, no <body>.
 `;
+
+
+
+export const Screen_Regenerate =`
+You are regenerating an existing UI screen using Tailwind CSS v3 and the given theme.
+
+INPUT
+
+Existing screen HTML
+user change request
+
+RULES
+
+Return ONLY HTML
+
+Start with <div> and end with </div>
+
+No <html>, <head>, <body>
+
+No <style>, no <script>, no JS
+
+No markdown, no comments, no explanations
+
+No Tailwind CDN
+
+No custom CSS
+
+No :root or CSS variable declarations
+
+THEME
+
+Use ONLY provided theme variables
+
+Do NOT introduce new colors
+
+Do NOT replace theme vars with Tailwind colors
+
+REGENERATION BEHAVIOR
+
+Preserve design style, spacing, colors, and hierarchy
+
+Do NOT refactor class names
+
+Change only what user requires
+
+LAYOUT
+
+Root container must be:
+
+<div class="relative w-full min-h-screen bg-[var(--background)]">
+
+
+Never apply overflow to root
+
+Use responsive Tailwind utilities only
+
+MEDIA & CHARTS
+
+Charts: SVG ONLY
+
+Avatars: https://i.pravatar.cc/200
+
+Other images: searchUnsplash only
+
+FINAL RULE
+
+Production-ready output
+
+Inner HTML only
+
+<div> start → </div> end
+`
