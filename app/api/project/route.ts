@@ -11,6 +11,10 @@ export async function POST(req: NextRequest) {
   const {has} = await auth();
   const hasPremiumAccess = has({plan:"unlimited"});
 
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+
   const projects  = await db.select().from(ProjectTable)
   .where(eq(ProjectTable.userId,user?.primaryEmailAddress?.emailAddress as string))
 
@@ -34,7 +38,15 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const projectId = await req.nextUrl.searchParams.get("projectId");
 
+  const { userId } = await auth();
+  
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const user = await currentUser();
+
 
   try {
     if (!projectId) {
@@ -88,6 +100,10 @@ export async function PUT(req: NextRequest) {
       { status: 400 }
     );
   }
+
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
 
   const updateFields: any = {};
 

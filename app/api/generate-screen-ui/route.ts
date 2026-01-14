@@ -40,6 +40,7 @@ export async function POST(req:NextRequest){
             })
     
             const code = result.choices[0].message.content;
+            console.log(code);
     
             const updateResult = await db.update(ScreenConfigTable)
             .set({
