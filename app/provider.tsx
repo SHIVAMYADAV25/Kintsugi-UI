@@ -5,6 +5,7 @@ import axios from "axios"
 import {userDetailContext} from "../context/UserDetailContext"
 import { SettingContext } from '@/context/SettingContext'
 import { RefreshDataContext } from '@/context/RefreshDataContext'
+import { useAuth } from '@clerk/nextjs'
 
 const provider =  ({children} : any) => {
 
@@ -12,9 +13,13 @@ const provider =  ({children} : any) => {
   const [settingDetail,setSettingDetail] = useState();
   const [refresData,setRefreshData] = useState();
 
-    useEffect(()=>{
-        CreateNewUser();
-    },[])
+    const { isLoaded, userId } = useAuth();
+
+useEffect(() => {
+  if (isLoaded && userId) {
+    CreateNewUser();
+  }
+}, [isLoaded, userId]);
 
     const CreateNewUser = async () => {
         const result = await axios.post("/api/user",{});

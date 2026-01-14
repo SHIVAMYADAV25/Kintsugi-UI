@@ -4,18 +4,28 @@ import axios from 'axios'
 import { ProjectType } from '@/type/types'
 import ProjectCard from './ProjectCard'
 import { Skeleton } from '@/components/ui/skeleton'
+import { toast } from 'sonner'
 
 const ProjectList = () => {
   const [projectList, setProjectList] = useState<ProjectType[]>([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    GetProjectList()
+    GetProjectList();
   }, [])
 
   const GetProjectList = async () => {
     setLoading(true)
     const result = await axios.get("/api/project")
+    if (result.status === 401) {
+    toast.error("Please login");
+    return;
+  }
+
+    console.log("STATUS:", result.status);
+    console.log("TYPE:", result.headers["content-type"]);
+    console.log("DATA:", result.data);
+    console.log(result.data)
     setProjectList(result.data)
     setLoading(false)
   }

@@ -55,36 +55,41 @@ export const suggestions = [
 ];
 
 
-export const HTMLWrapper = (theme:any,clean:string | undefined) =>{
-  return (
-    `
-        <!doctype html>
-        <html>
-        <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+export function HTMLWrapper(theme: any, innerHTML: string = "") {
+  const camelToKebab = (s: string) =>
+    s.replace(/[A-Z]/g, m => "-" + m.toLowerCase())
 
-        <!-- Google Font -->
-        <link rel="preconnect" href="https://fonts.googleapis.com"/>
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  const cssVars = Object.entries(theme || {})
+    .filter(([k]) => k !== "chart")
+    .map(([k, v]) => `--${camelToKebab(k)}:${v}`)
+    .join(";")
 
-        <!-- Tailwind -->
-        <script src="https://cdn.tailwindcss.com/3.0.0"></script>
+  const charts =
+    theme?.chart?.map((c: string, i: number) => `--chart-${i + 1}:${c}`).join(";") || ""
 
-        <!-- Iconify -->
-        <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+  return `
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8"/>
 
-        <style>
-            ${themeToCssVars(theme)}
-        </style>
-        </head>
+<script src="https://cdn.tailwindcss.com"></script>
 
-        <body class="bg-[var(--background)] text-[var(--foreground)] w-full">
-        ${clean ?? ""}
-        </body>
+<style>
+:root{${cssVars};${charts}}
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--background);
+  color:var(--foreground);
+  font-family:Inter,system-ui,sans-serif;
+}
+</style>
+</head>
 
-        </html>
-    `
-  )
+<body class="bg-[var(--background)] text-[var(--foreground)]">
+${innerHTML}
+</body>
+</html>
+`
 }
